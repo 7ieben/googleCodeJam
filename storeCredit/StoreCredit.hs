@@ -23,18 +23,41 @@ adds up to the store credit. The lower index should be output first.
 import System.IO
 import System.Environment
 import System.Exit
+import System.FilePath
 import Data.List
 
-indexof :: Integer -> [Integer] -> Integer
-indexof _ [] = undefined
-indexof x (i:is) = undefined   
+indexOf :: (Int,Int) -> [Int] -> (Int,Int)
+indexOf (x,y) intList = (xindex,yindex)
+    where xindex = 1 + (head $ elemIndices x intList)
+          yindex = (length intList) - (head $ elemIndices y $ reverse intList)
 
-indexOf' :: (Integer,Integer) -> [Integer] -> (Integer,Integer)
-indexOf' (x,y) intList = (xindex,yindex)
-    where xindex = indexof x intList
-          yindex = indexof y intList
-
-solve :: Integer -> [Integer] -> (Integer, Integer)
-solve n intList = indexOf' items intList
+solve :: Int -> [Int] -> (Int, Int)
+solve n intList = indexOf items intList
     where items = head [(x,y) | x <- intList, y <- intList, x + y == n]
 
+process :: Handle -> Handle -> Integer -> IO ()
+process = undefined
+
+main :: IO ()
+main = do
+  args <- getArgs
+  case args of
+    (x:xs) -> do
+              if (takeExtension x == ".in") then
+                do
+                  infile  <- openFile x ReadMode  
+                  outfile <- openFile "OutFile.out" WriteMode
+                  process infile outfile 1
+                  hClose infile
+                  hClose outfile
+                  putStrLn "Success!!!"
+                  exitWith ExitSuccess
+                else do 
+                  prog <- getProgName
+                  hPutStrLn stderr ("Use: InputFile . in")
+                  exitWith (ExitFailure 1)
+    _ -> do 
+         prog <- getProgName
+         hPutStrLn stderr ("Use: " ++ prog ++ "Inputfile")
+         exitWith (ExitFailure 2)
+    
