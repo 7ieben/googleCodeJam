@@ -12,3 +12,10 @@ and run the program with
     ./exe_path inputfile_path
 
 The output will end up in a file called Output.out. This will be replaced with a soulution that uses the inputfile name with .out as the extension.
+
+TODO
+----
+
+- make functionnames uniform: solve, process, main
+- make main function a generic higher-order function
+  - takes solve and process to read the file, solve the problem and write the output
