@@ -22,11 +22,17 @@ import System.Exit
 import System.FilePath
 import Data.List 
 
-reverseWords :: Integer -> String -> String
-reverseWords n = ((++) ("Case #" ++ show n ++ " ")) . unwords . reverse . words
+-- Takes the lineindex and the line and returnes the output for that line
+-- called in process
+solve :: Integer -> String -> String
+solve n = ((++) ("Case #" ++ show n ++ ": ")) . unwords . reverse . words
 
-solve :: Handle -> Handle -> Integer -> IO ()
-solve infile outfile index = do
+
+-- processes the file representetd by infile by lines, calls solve, and writes
+-- its output to outfile
+-- called in main
+process :: Handle -> Handle -> Integer -> IO ()
+process infile outfile index = do
   inEOF <- hIsEOF infile
   if inEOF
   then return ()
@@ -34,32 +40,32 @@ solve infile outfile index = do
    line <- hGetLine infile
    if (length line == 1) then
        do
-         solve infile outfile index
+         process infile outfile index
    else do 
-     outLine <- return(reverseWords index line)
+     outLine <- return(solve index line)
      hPutStrLn outfile outLine
-     solve infile outfile (index + 1)
+     process infile outfile (index + 1)
                       
 main :: IO ()
 main = do
   args <- getArgs
   case args of
-    (x:xs) -> do
+    (x:_) -> do
               if (takeExtension x == ".in") then
                 do
                   infile  <- openFile x ReadMode  
                   outfile <- openFile "OutFile.out" WriteMode
-                  solve infile outfile 1
+                  process infile outfile 1
                   hClose infile
                   hClose outfile
                   putStrLn "Success!!!"
                   exitWith ExitSuccess
                 else do 
                   prog <- getProgName
-                  hPutStrLn stderr ("Use: InputFile . in")
+                  hPutStrLn stderr "Use: InputFile . in"
                   exitWith (ExitFailure 1)
     _ -> do 
          prog <- getProgName
-         hPutStrLn stderr ("Use: " ++ prog ++ "Inputfile")
+         hPutStrLn stderr $ "Use: " ++ prog ++ "Inputfile"
          exitWith (ExitFailure 2)
     
