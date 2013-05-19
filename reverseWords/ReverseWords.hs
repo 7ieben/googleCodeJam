@@ -54,7 +54,7 @@ main = do
               if (takeExtension x == ".in") then
                 do
                   infile  <- openFile x ReadMode  
-                  outfile <- openFile "OutFile.out" WriteMode
+                  outfile <- openFile (takeBaseName x ++ ".out") WriteMode
                   process infile outfile 1
                   hClose infile
                   hClose outfile

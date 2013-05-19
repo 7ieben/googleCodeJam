@@ -29,7 +29,7 @@ import Data.List
 indexOf :: (Int,Int) -> [Int] -> (Int,Int)
 indexOf (x,y) intList = (xindex,yindex)
     where xindex = 1 + (head $ elemIndices x intList)
-          yindex = (length intList) - (head $ elemIndices y $ reverse intList)
+          yindex = length intList - (head $ elemIndices y $ reverse intList)
 
 solve :: Int -> [Int] -> (Int, Int)
 solve n intList = indexOf items intList
@@ -46,7 +46,7 @@ main = do
               if (takeExtension x == ".in") then
                 do
                   infile  <- openFile x ReadMode  
-                  outfile <- openFile "OutFile.out" WriteMode
+                  outfile <- openFile (takeBaseName x ++ ".out") WriteMode
                   process infile outfile 1
                   hClose infile
                   hClose outfile
