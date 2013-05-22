@@ -31,12 +31,21 @@ indexOf (x,y) intList = (xindex,yindex)
     where xindex = 1 + (head $ elemIndices x intList)
           yindex = length intList - (head $ elemIndices y $ reverse intList)
 
-solve :: Int -> [Int] -> (Int, Int)
-solve n intList = indexOf items intList
+solve :: Int -> [Int] -> Int -> String
+solve n intList case' = "Case #" ++ show case' ++ ": " ++ 
+                        show (fst itemindex) ++ " " ++ show (snd itemindex)
     where items = head [(x,y) | x <- intList, y <- intList, x + y == n]
+          itemindex = indexOf items intList
 
 process :: Handle -> Handle -> Integer -> IO ()
-process = undefined
+process infile outfile index = do
+  inEOF <- hIsEOF infile
+  if inEOF
+  then return ()
+  else do
+    return () --eine Zeile überspringen, Zahl aus zweiter Zeile merken, 
+              --nächste Zeile als Zahlenliste speichern -> solve aufrufen
+              --ausgabe von Solve in outfile schreiben
 
 main :: IO ()
 main = do
