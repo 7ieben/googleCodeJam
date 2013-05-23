@@ -50,7 +50,7 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    (x:_) -> do
+    (x:[]) -> do
               if (takeExtension x == ".in") then
                 do
                   infile  <- openFile x ReadMode  
@@ -62,10 +62,10 @@ main = do
                   exitWith ExitSuccess
                 else do 
                   prog <- getProgName
-                  hPutStrLn stderr "Use: InputFile . in"
+                  hPutStrLn stderr "Use: InputFile.in"
                   exitWith (ExitFailure 1)
     _ -> do 
          prog <- getProgName
-         hPutStrLn stderr $ "Use: " ++ prog ++ "Inputfile"
+         hPutStrLn stderr $ "Use: " ++ prog ++ " Inputfile"
          exitWith (ExitFailure 2)
     
