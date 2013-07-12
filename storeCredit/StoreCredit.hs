@@ -25,6 +25,7 @@ import System.Environment
 import System.Exit
 import System.FilePath
 import Data.List
+import Control.Monad (unless)
 
 indexOf :: (Int,Int) -> [Int] -> (Int,Int)
 indexOf (x,y) intList = (xindex,yindex)
@@ -37,22 +38,24 @@ solve n intList case' = "Case #" ++ show case' ++ ": " ++
     where items = head [(x,y) | x <- intList, y <- intList, x + y == n]
           itemindex = indexOf items intList
 
-process :: Handle -> Handle -> Integer -> IO ()
+process :: Handle -> Handle -> Int -> IO ()
 process infile outfile index = do
   inEOF <- hIsEOF infile
-  if inEOF
-  then return ()
-  else do
-    return () --eine Zeile überspringen, Zahl aus zweiter Zeile merken, 
-              --nächste Zeile als Zahlenliste speichern -> solve aufrufen
-              --ausgabe von Solve in outfile schreiben
+  unless inEOF $
+         do
+           line1 <- hGetLine infile
+           line2 <- hGetLine infile
+           line3 <- hGetLine infile
+           n <- return (read line2 :: Int)
+           list <- return (map read (words line3) :: [Int])
+           hPutStrLn outfile $ solve n list index
+           process infile outfile $ index + 1
 
 main :: IO ()
 main = do
   args <- getArgs
   case args of
-    (x:xs) -> do
-              if (takeExtension x == ".in") then
+    (x:_) -> if takeExtension x == ".in" then
                 do
                   infile  <- openFile x ReadMode  
                   outfile <- openFile (takeBaseName x ++ ".out") WriteMode
@@ -60,10 +63,10 @@ main = do
                   hClose infile
                   hClose outfile
                   putStrLn "Success!!!"
-                  exitWith ExitSuccess
+                  exitSuccess
                 else do 
                   prog <- getProgName
-                  hPutStrLn stderr ("Use: InputFile . in")
+                  hPutStrLn stderr $ "Use: " ++ prog ++ " InputFile . in"
                   exitWith (ExitFailure 1)
     _ -> do 
          prog <- getProgName
