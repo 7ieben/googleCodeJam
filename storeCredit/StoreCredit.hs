@@ -29,8 +29,8 @@ import Control.Monad (unless)
 
 indexOf :: (Int,Int) -> [Int] -> (Int,Int)
 indexOf (x,y) intList = (xindex,yindex)
-    where xindex = 1 + (head $ elemIndices x intList)
-          yindex = length intList - (head $ elemIndices y $ reverse intList)
+    where xindex = 1 + head (elemIndices x intList)
+          yindex = length intList - head (elemIndices y $ reverse intList)
 
 solve :: Int -> [Int] -> Int -> String
 solve n intList case' = "Case #" ++ show case' ++ ": " ++ 
@@ -43,13 +43,14 @@ process infile outfile index = do
   inEOF <- hIsEOF infile
   unless inEOF $
          do
-           line1 <- hGetLine infile
+           hGetLine infile
            line2 <- hGetLine infile
            line3 <- hGetLine infile
-           n <- return (read line2 :: Int)
-           list <- return (map read (words line3) :: [Int])
-           hPutStrLn outfile $ solve n list index
-           process infile outfile $ index + 1
+           let n = (read line2 :: Int)
+               list = (map read (words line3) :: [Int]) in
+                     do 
+                       hPutStrLn outfile $ solve n list index
+                       process infile outfile $ index + 1
 
 main :: IO ()
 main = do
